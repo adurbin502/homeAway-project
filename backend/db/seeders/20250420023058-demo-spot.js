@@ -37,7 +37,7 @@ const spots = [
 ];
 
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface) {
     options.tableName = 'Spots';
     return queryInterface.bulkInsert(options, spots);
   },
@@ -50,4 +50,5 @@ module.exports = {
     }, {});
   }
 };
+
 

@@ -33,7 +33,7 @@ const bookings = [
 ];
 
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface) {
     options.tableName = 'Bookings';
     return queryInterface.bulkInsert(options, bookings);
   },
@@ -42,11 +42,11 @@ module.exports = {
     options.tableName = 'Bookings';
     const Op = Sequelize.Op;
     return queryInterface.bulkDelete(options, {
-      [Op.or]: bookings.map(booking => ({
-        spotId: booking.spotId,
-        userId: booking.userId,
-        startDate: booking.startDate,
-        endDate: booking.endDate
+      [Op.or]: bookings.map(({ spotId, userId, startDate, endDate }) => ({
+        spotId,
+        userId,
+        startDate,
+        endDate
       }))
     }, {});
   }

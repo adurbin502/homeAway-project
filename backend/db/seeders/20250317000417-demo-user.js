@@ -5,11 +5,11 @@ const bcrypt = require('bcryptjs');
 
 let options = {};
 if (process.env.NODE_ENV === 'production') {
-  options.schema = process.env.SCHEMA;
+  options.schema = process.env.SCHEMA; // define schema in options if in production
 }
 
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up() {
     await User.bulkCreate([
       {
         email: 'demo@user.io',
@@ -43,3 +43,4 @@ module.exports = {
     }, {});
   }
 };
+

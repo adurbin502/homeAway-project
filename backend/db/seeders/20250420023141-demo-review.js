@@ -33,7 +33,7 @@ const reviews = [
 ];
 
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface) {
     options.tableName = 'Reviews';
     return queryInterface.bulkInsert(options, reviews);
   },
@@ -52,4 +52,5 @@ module.exports = {
     }, {});
   }
 };
+
 
