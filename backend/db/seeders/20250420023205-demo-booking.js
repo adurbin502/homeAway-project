@@ -23,8 +23,8 @@ const bookings = [
     updatedAt: new Date()
   },
   {
-    spotId: 3,
-    userId: 1,
+    spotId: 1,
+    userId: 3,
     startDate: '2025-07-01',
     endDate: '2025-07-05',
     createdAt: new Date(),
@@ -51,4 +51,5 @@ module.exports = {
     }, {});
   }
 };
+
 
