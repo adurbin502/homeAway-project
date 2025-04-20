@@ -1,21 +1,23 @@
+// backend/routes/api/session.js
 const express = require('express');
-const { Op } = require('sequelize');
 const bcrypt = require('bcryptjs');
+const { check } = require('express-validator');
+const { Op } = require('sequelize');
+
 const { setTokenCookie, restoreUser } = require('../../utils/auth');
 const { User } = require('../../db/models');
-const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
 
 const router = express.Router();
 
+// Validate login input
 const validateLogin = [
   check('credential')
-    .exists({ checkFalsy: true })
-    .notEmpty()
-    .withMessage('Please provide a valid email or username.'),
+      .exists({ checkFalsy: true })
+      .withMessage('Email or username is required'),
   check('password')
-    .exists({ checkFalsy: true })
-    .withMessage('Please provide a password.'),
+      .exists({ checkFalsy: true })
+      .withMessage('Password is required'),
   handleValidationErrors
 ];
 
@@ -33,7 +35,7 @@ router.post('/', validateLogin, async (req, res, next) => {
   });
 
   if (!user || !bcrypt.compareSync(password, user.hashedPassword.toString())) {
-    const err = new Error('Login failed');
+    const err = new Error('Invalid credentials');
     err.status = 401;
     err.title = 'Login failed';
     err.errors = { credential: 'The provided credentials were invalid.' };
@@ -42,14 +44,13 @@ router.post('/', validateLogin, async (req, res, next) => {
 
   const safeUser = {
     id: user.id,
-    email: user.email,
-    username: user.username,
     firstName: user.firstName,
-    lastName: user.lastName
+    lastName: user.lastName,
+    email: user.email,
+    username: user.username
   };
 
   await setTokenCookie(res, safeUser);
-
   return res.json({ user: safeUser });
 });
 
@@ -59,21 +60,19 @@ router.delete('/', (_req, res) => {
   return res.json({ message: 'success' });
 });
 
-// Get session user
+// Restore session user
 router.get('/', (req, res) => {
   const { user } = req;
   if (user) {
     const safeUser = {
       id: user.id,
-      email: user.email,
-      username: user.username,
       firstName: user.firstName,
-      lastName: user.lastName
+      lastName: user.lastName,
+      email: user.email,
+      username: user.username
     };
     return res.json({ user: safeUser });
-  } else {
-    return res.json({ user: null });
-  }
+  } else return res.json({ user: null });
 });
 
 module.exports = router;
