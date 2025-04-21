@@ -2,15 +2,13 @@
 
 /** @type {import('sequelize-cli').Migration} */
 let options = {};
-options.tableName = 'Spots';
-
 if (process.env.NODE_ENV === 'production') {
-  options.schema = process.env.SCHEMA; // Define your schema in options
+  options.schema = process.env.SCHEMA;  // Define your schema in options
 }
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable(options, {
+    await queryInterface.createTable('Spots', {  // First argument should be the table name string
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -69,10 +67,11 @@ module.exports = {
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       }
-    });
+    }, options);  // Pass options as the third argument
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable(options);
+    options.tableName = 'Spots';  // Add the table name to options for dropping
+    return queryInterface.dropTable(options);
   }
 };
