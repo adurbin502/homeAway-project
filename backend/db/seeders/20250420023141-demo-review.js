@@ -34,14 +34,12 @@ const reviews = [
 
 module.exports = {
   async up(queryInterface) {
-    options.tableName = 'Reviews';
-    return queryInterface.bulkInsert(options, reviews);
+    return queryInterface.bulkInsert('Reviews', reviews, options);  // Changed from options to 'Reviews' and added options as third argument
   },
 
   async down(queryInterface, Sequelize) {
-    options.tableName = 'Reviews';
     const Op = Sequelize.Op;
-    return queryInterface.bulkDelete(options, {
+    return queryInterface.bulkDelete('Reviews', {  // Changed from options to 'Reviews'
       review: {
         [Op.in]: [
           'This place was amazing!',
@@ -49,8 +47,6 @@ module.exports = {
           'Would definitely stay again.'
         ]
       }
-    }, {});
+    }, options);  // Added options as third argument
   }
 };
-
-

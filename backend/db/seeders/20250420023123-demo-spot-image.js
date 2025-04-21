@@ -31,14 +31,12 @@ const spotImages = [
 
 module.exports = {
   async up(queryInterface) {
-    options.tableName = 'SpotImages';
-    return queryInterface.bulkInsert(options, spotImages);
+    return queryInterface.bulkInsert('SpotImages', spotImages, options);  // Changed from options to 'SpotImages' and added options as third argument
   },
 
   async down(queryInterface, Sequelize) {
-    options.tableName = 'SpotImages';
     const Op = Sequelize.Op;
-    return queryInterface.bulkDelete(options, {
+    return queryInterface.bulkDelete('SpotImages', {  // Changed from options to 'SpotImages'
       url: {
         [Op.in]: [
           'https://example.com/spot1-preview.jpg',
@@ -46,7 +44,6 @@ module.exports = {
           'https://example.com/spot2-preview.jpg'
         ]
       }
-    }, {});
+    }, options);  // Added options as third argument
   }
 };
-
