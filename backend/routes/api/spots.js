@@ -88,8 +88,23 @@ router.get('/:spotId', async (req, res) => {
 
 // Create a spot
 router.post('/', requireAuth, validateSpot, async (req, res) => {
-    const spot = await Spot.create({ ...req.body, ownerId: req.user.id });
-    res.status(201).json(spot);
+  const { address, city, state, country, lat, lng, name, description, price } = req.body;
+  const { user } = req;
+
+  const spot = await Spot.create({
+    ownerId: user.id,
+    address,
+    city,
+    state,
+    country,
+    lat,
+    lng,
+    name,
+    description,
+    price,
+  });
+
+  return res.status(201).json(spot);
 });
 
 // Edit a spot
