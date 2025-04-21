@@ -2,6 +2,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const { check } = require('express-validator');
+const { Op } = require('sequelize');  // Add this import
 const { handleValidationErrors } = require('../../utils/validation');
 const { setTokenCookie } = require('../../utils/auth');
 const { User } = require('../../db/models');
@@ -42,7 +43,7 @@ router.post('/', validateSignup, async (req, res, next) => {
     // Check for existing user
     const existingUser = await User.findOne({
         where: {
-            [User.sequelize.Op.or]: [{ email }, { username }]
+            [Op.or]: [{ email }, { username }]  // Modified this line
         }
     });
 
@@ -68,9 +69,7 @@ router.post('/', validateSignup, async (req, res, next) => {
     const safeUser = {
         id: user.id,
         email: user.email,
-        username: user.username,
-        firstName: user.firstName,
-        lastName: user.lastName
+        username: user.username
     };
 
     await setTokenCookie(res, safeUser);
