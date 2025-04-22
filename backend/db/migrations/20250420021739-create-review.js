@@ -8,6 +8,12 @@ if (process.env.NODE_ENV === 'production') {
 
 module.exports = {
   async up(queryInterface, Sequelize) {
+    let options = {};
+    if (process.env.NODE_ENV === 'production') {
+      options.schema = process.env.SCHEMA;  // define your schema in options object
+    }
+
+    await queryInterface.createSchema(options.schema);
     await queryInterface.createTable('Reviews', {
       id: {
         allowNull: false,
