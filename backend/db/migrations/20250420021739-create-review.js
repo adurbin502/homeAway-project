@@ -8,7 +8,7 @@ if (process.env.NODE_ENV === 'production') {
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Reviews', {  // Changed from options to 'Reviews'
+    await queryInterface.createTable('Reviews', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -18,22 +18,35 @@ module.exports = {
       spotId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: { model: 'Spots' },
+        references: {
+          model: 'Spots',
+          key: 'id'
+        },
         onDelete: 'CASCADE'
       },
       userId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: { model: 'Users' },
+        references: {
+          model: 'Users',
+          key: 'id'
+        },
         onDelete: 'CASCADE'
       },
       review: {
         type: Sequelize.TEXT,
-        allowNull: false
+        allowNull: false,
+        validate: {
+          len: [1, 2000] // Optional: add length validation
+        }
       },
       stars: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: false,
+        validate: {
+          min: 1,
+          max: 5
+        }
       },
       createdAt: {
         allowNull: false,
@@ -45,11 +58,21 @@ module.exports = {
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       }
-    }, options);  // Added options as third argument
+    }, options);
+
+    // Add a unique constraint to prevent multiple reviews from same user for same spot
+    await queryInterface.addIndex(
+        'Reviews',
+        ['spotId', 'userId'],
+        {
+          unique: true,
+          name: 'reviews_unique_spot_user'
+        }
+    );
   },
 
   async down(queryInterface, Sequelize) {
-    options.tableName = 'Reviews';  // Set tableName here instead of at the top
-    return queryInterface.dropTable(options);
+    options.tableName = 'Reviews';
+    return queryInterface.dropTable('Reviews', options); // Fixed: Pass table name and options separately
   }
 };

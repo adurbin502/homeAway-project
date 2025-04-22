@@ -8,7 +8,7 @@ if (process.env.NODE_ENV === 'production') {
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Bookings', {  // Changed from options to 'Bookings'
+    await queryInterface.createTable('Bookings', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -18,22 +18,44 @@ module.exports = {
       spotId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: { model: 'Spots' },
+        references: {
+          model: 'Spots',
+          key: 'id'
+        },
         onDelete: 'CASCADE'
       },
       userId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: { model: 'Users' },
+        references: {
+          model: 'Users',
+          key: 'id'
+        },
         onDelete: 'CASCADE'
       },
       startDate: {
         type: Sequelize.DATE,
-        allowNull: false
+        allowNull: false,
+        validate: {
+          isDate: true,
+          notInPast(value) {
+            if (new Date(value) < new Date()) {
+              throw new Error('Start date cannot be in the past');
+            }
+          }
+        }
       },
       endDate: {
         type: Sequelize.DATE,
-        allowNull: false
+        allowNull: false,
+        validate: {
+          isDate: true,
+          isAfterStartDate(value) {
+            if (new Date(value) <= new Date(this.startDate)) {
+              throw new Error('End date must be after start date');
+            }
+          }
+        }
       },
       createdAt: {
         allowNull: false,
@@ -45,11 +67,16 @@ module.exports = {
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       }
-    }, options);  // Added options as third argument
+    }, options);
+
+    // Add indexes for better query performance
+    await queryInterface.addIndex('Bookings', ['spotId']);
+    await queryInterface.addIndex('Bookings', ['userId']);
+    await queryInterface.addIndex('Bookings', ['startDate', 'endDate']);
   },
 
   async down(queryInterface, Sequelize) {
-    options.tableName = 'Bookings';  // Set tableName here instead of at the top
-    return queryInterface.dropTable(options);
+    options.tableName = 'Bookings';
+    return queryInterface.dropTable('Bookings', options); // Fixed: Pass table name and options separately
   }
 };

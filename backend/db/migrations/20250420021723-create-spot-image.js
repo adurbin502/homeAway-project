@@ -8,7 +8,7 @@ if (process.env.NODE_ENV === 'production') {
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('SpotImages', {  // Changed from options to 'SpotImages'
+    await queryInterface.createTable('SpotImages', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -18,16 +18,20 @@ module.exports = {
       spotId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: { model: 'Spots' },
+        references: {
+          model: 'Spots',
+          key: 'id'
+        },
         onDelete: 'CASCADE'
       },
       url: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(2000), // Added max length for URLs
         allowNull: false
       },
       preview: {
         type: Sequelize.BOOLEAN,
-        allowNull: false
+        allowNull: false,
+        defaultValue: false // Added default value
       },
       createdAt: {
         allowNull: false,
@@ -39,11 +43,11 @@ module.exports = {
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       }
-    }, options);  // Added options as third argument
+    }, options);
   },
 
   async down(queryInterface, Sequelize) {
-    options.tableName = 'SpotImages';  // Set tableName here instead of at the top
-    return queryInterface.dropTable(options);
+    options.tableName = 'SpotImages';
+    return queryInterface.dropTable('SpotImages', options); // Fixed: Pass table name and options separately
   }
 };

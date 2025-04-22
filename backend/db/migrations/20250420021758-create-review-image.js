@@ -8,7 +8,7 @@ if (process.env.NODE_ENV === 'production') {
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('ReviewImages', {  // Changed from options to 'ReviewImages'
+    await queryInterface.createTable('ReviewImages', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -18,12 +18,18 @@ module.exports = {
       reviewId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: { model: 'Reviews' },
+        references: {
+          model: 'Reviews',
+          key: 'id'
+        },
         onDelete: 'CASCADE'
       },
       url: {
-        type: Sequelize.STRING,
-        allowNull: false
+        type: Sequelize.STRING(2000), // Added max length for URLs
+        allowNull: false,
+        validate: {
+          isUrl: true // Optional: URL format validation
+        }
       },
       createdAt: {
         allowNull: false,
@@ -35,11 +41,14 @@ module.exports = {
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       }
-    }, options);  // Added options as third argument
+    }, options);
+
+    // Optional: Add an index on reviewId for faster lookups
+    await queryInterface.addIndex('ReviewImages', ['reviewId']);
   },
 
   async down(queryInterface, Sequelize) {
-    options.tableName = 'ReviewImages';  // Set tableName here instead of at the top
-    return queryInterface.dropTable(options);
+    options.tableName = 'ReviewImages';
+    return queryInterface.dropTable('ReviewImages', options); // Fixed: Pass table name and options separately
   }
 };

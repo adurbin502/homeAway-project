@@ -8,7 +8,7 @@ if (process.env.NODE_ENV === 'production') {
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Spots', {  // First argument should be the table name string
+    await queryInterface.createTable('Spots', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -18,7 +18,10 @@ module.exports = {
       ownerId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: { model: 'Users' },
+        references: {
+          model: 'Users',
+          key: 'id'
+        },
         onDelete: 'CASCADE'
       },
       address: {
@@ -38,15 +41,15 @@ module.exports = {
         allowNull: false
       },
       lat: {
-        type: Sequelize.DECIMAL,
+        type: Sequelize.DECIMAL(10, 7),
         allowNull: false
       },
       lng: {
-        type: Sequelize.DECIMAL,
+        type: Sequelize.DECIMAL(10, 7),
         allowNull: false
       },
       name: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(50),
         allowNull: false
       },
       description: {
@@ -54,7 +57,7 @@ module.exports = {
         allowNull: false
       },
       price: {
-        type: Sequelize.DECIMAL,
+        type: Sequelize.DECIMAL(10, 2),
         allowNull: false
       },
       createdAt: {
@@ -67,11 +70,11 @@ module.exports = {
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       }
-    }, options);  // Pass options as the third argument
+    }, options);
   },
 
   async down(queryInterface, Sequelize) {
-    options.tableName = 'Spots';  // Add the table name to options for dropping
-    return queryInterface.dropTable(options);
+    options.tableName = 'Spots';
+    return queryInterface.dropTable('Spots', options);
   }
 };
