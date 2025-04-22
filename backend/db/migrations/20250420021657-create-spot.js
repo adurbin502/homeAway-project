@@ -3,11 +3,16 @@
 /** @type {import('sequelize-cli').Migration} */
 let options = {};
 if (process.env.NODE_ENV === 'production') {
-  options.schema = process.env.SCHEMA;  // Define your schema in options
+  options.schema = process.env.SCHEMA;  // define your schema in options object
 }
 
 module.exports = {
   async up(queryInterface, Sequelize) {
+    // Add this block to create the schema in production
+    if (process.env.NODE_ENV === 'production') {
+      await queryInterface.createSchema(process.env.SCHEMA);
+    }
+
     await queryInterface.createTable('Spots', {
       id: {
         allowNull: false,
@@ -77,4 +82,5 @@ module.exports = {
     options.tableName = 'Spots';
     return queryInterface.dropTable('Spots', options);
   }
+
 };
