@@ -8,12 +8,6 @@ if (process.env.NODE_ENV === 'production') {
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    let options = {};
-    if (process.env.NODE_ENV === 'production') {
-      options.schema = process.env.SCHEMA;  // define your schema in options object
-    }
-
-    await queryInterface.createSchema(options.schema);
     await queryInterface.createTable('Bookings', {
       id: {
         allowNull: false,
@@ -75,10 +69,30 @@ module.exports = {
       }
     }, options);
 
-    // Add indexes for better query performance
-    await queryInterface.addIndex('Bookings', ['spotId']);
-    await queryInterface.addIndex('Bookings', ['userId']);
-    await queryInterface.addIndex('Bookings', ['startDate', 'endDate']);
+    const tableName = process.env.NODE_ENV === 'production' ? `${process.env.SCHEMA}.Bookings` : 'Bookings';
+    
+    // Add indexes with proper schema handling
+    await queryInterface.addIndex(
+        tableName,
+        ['spotId'],
+        {
+          name: 'bookings_spot'
+        }
+    );
+    await queryInterface.addIndex(
+        tableName,
+        ['userId'],
+        {
+          name: 'bookings_user'
+        }
+    );
+    await queryInterface.addIndex(
+        tableName,
+        ['startDate', 'endDate'],
+        {
+          name: 'bookings_date_range'
+        }
+    );
   },
 
   async down(queryInterface, Sequelize) {
