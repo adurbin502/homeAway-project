@@ -14,7 +14,7 @@ module.exports = {
     }
 
     await queryInterface.createSchema(options.schema);
-    await queryInterface.createTable('Review', {
+    await queryInterface.createTable('Reviews', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -25,7 +25,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Spot',
+          model: 'Spots',
           key: 'id'
         },
         onDelete: 'CASCADE'
@@ -34,7 +34,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'User',
+          model: 'Users',
           key: 'id'
         },
         onDelete: 'CASCADE'
@@ -68,7 +68,7 @@ module.exports = {
 
     // Add a unique constraint to prevent multiple reviews from same user for same spot
     await queryInterface.addIndex(
-        'Review',
+        'Reviews',
         ['spotId', 'userId'],
         {
           unique: true,
@@ -78,7 +78,7 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    options.tableName = 'Review';
-    return queryInterface.dropTable('Review', options); // Fixed: Pass table name and options separately
+    options.tableName = 'Reviews';
+    return queryInterface.dropTable('Reviews', options); // Fixed: Pass table name and options separately
   }
 };

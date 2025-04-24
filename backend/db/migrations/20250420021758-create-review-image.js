@@ -14,7 +14,7 @@ module.exports = {
     }
 
     await queryInterface.createSchema(options.schema);
-    await queryInterface.createTable('ReviewImage', {
+    await queryInterface.createTable('ReviewImages', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -25,7 +25,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Review',
+          model: 'Reviews',
           key: 'id'
         },
         onDelete: 'CASCADE'
@@ -50,11 +50,11 @@ module.exports = {
     }, options);
 
     // Optional: Add an index on reviewId for faster lookups
-    await queryInterface.addIndex('ReviewImage', ['reviewId']);
+    await queryInterface.addIndex('ReviewImages', ['reviewId']);
   },
 
   async down(queryInterface, Sequelize) {
-    options.tableName = 'ReviewImage';
-    return queryInterface.dropTable('ReviewImage', options); // Fixed: Pass table name and options separately
+    options.tableName = 'ReviewImages';
+    return queryInterface.dropTable('ReviewImages', options); // Fixed: Pass table name and options separately
   }
 };

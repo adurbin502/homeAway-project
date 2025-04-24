@@ -14,7 +14,7 @@ module.exports = {
     }
 
     await queryInterface.createSchema(options.schema);
-    await queryInterface.createTable('Booking', {
+    await queryInterface.createTable('Bookings', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -25,7 +25,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Spot',
+          model: 'Spots',
           key: 'id'
         },
         onDelete: 'CASCADE'
@@ -34,7 +34,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'User',
+          model: 'Users',
           key: 'id'
         },
         onDelete: 'CASCADE'
@@ -76,13 +76,13 @@ module.exports = {
     }, options);
 
     // Add indexes for better query performance
-    await queryInterface.addIndex('Booking', ['spotId']);
-    await queryInterface.addIndex('Booking', ['userId']);
-    await queryInterface.addIndex('Booking', ['startDate', 'endDate']);
+    await queryInterface.addIndex('Bookings', ['spotId']);
+    await queryInterface.addIndex('Bookings', ['userId']);
+    await queryInterface.addIndex('Bookings', ['startDate', 'endDate']);
   },
 
   async down(queryInterface, Sequelize) {
-    options.tableName = 'Booking';
-    return queryInterface.dropTable('Booking', options); // Fixed: Pass table name and options separately
+    options.tableName = 'Bookings';
+    return queryInterface.dropTable('Bookings', options); // Fixed: Pass table name and options separately
   }
 };
