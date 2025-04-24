@@ -28,12 +28,14 @@ const reviewImages = [
 
 module.exports = {
   async up(queryInterface) {
-    return queryInterface.bulkInsert('ReviewImages', reviewImages, options);  // Changed from options to 'ReviewImages' and added options as third argument
+    options.tableName = 'ReviewImages';
+    return queryInterface.bulkInsert(options, reviewImages);
   },
 
   async down(queryInterface, Sequelize) {
+    options.tableName = 'ReviewImages';
     const Op = Sequelize.Op;
-    return queryInterface.bulkDelete('ReviewImages', {  // Changed from options to 'ReviewImages'
+    return queryInterface.bulkDelete(options, {
       url: {
         [Op.in]: [
           'https://example.com/review-image-1.jpg',
@@ -41,6 +43,6 @@ module.exports = {
           'https://example.com/review-image-3.jpg'
         ]
       }
-    }, options);  // Added options as third argument
+    });
   }
 };
