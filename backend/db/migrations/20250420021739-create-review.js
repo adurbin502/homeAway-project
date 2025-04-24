@@ -1,6 +1,6 @@
+
 'use strict';
 
-/** @type {import('sequelize-cli').Migration} */
 let options = {};
 if (process.env.NODE_ENV === 'production') {
   options.schema = process.env.SCHEMA;
@@ -8,12 +8,6 @@ if (process.env.NODE_ENV === 'production') {
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    let options = {};
-    if (process.env.NODE_ENV === 'production') {
-      options.schema = process.env.SCHEMA;  // define your schema in options object
-    }
-
-    await queryInterface.createSchema(options.schema);
     await queryInterface.createTable('Reviews', {
       id: {
         allowNull: false,
@@ -43,7 +37,7 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: false,
         validate: {
-          len: [1, 2000] // Optional: add length validation
+          len: [1, 2000]
         }
       },
       stars: {
@@ -66,19 +60,26 @@ module.exports = {
       }
     }, options);
 
-    // Add a unique constraint to prevent multiple reviews from same user for same spot
+    // Add index with schema option for production
     await queryInterface.addIndex(
         'Reviews',
         ['spotId', 'userId'],
         {
           unique: true,
-          name: 'reviews_unique_spot_user'
+          name: 'reviews_unique_spot_user',
+          ...(process.env.NODE_ENV === 'production' && { schema: process.env.SCHEMA })
         }
     );
   },
 
   async down(queryInterface, Sequelize) {
-    options.tableName = 'Reviews';
-    return queryInterface.dropTable('Reviews', options); // Fixed: Pass table name and options separately
+    // Remove index first
+    await queryInterface.removeIndex(
+        'Reviews',
+        'reviews_unique_spot_user',
+        options
+    );
+    // Then drop the table
+    return queryInterface.dropTable('Reviews', options);
   }
 };
