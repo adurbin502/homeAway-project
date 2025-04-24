@@ -3,16 +3,11 @@
 /** @type {import('sequelize-cli').Migration} */
 let options = {};
 if (process.env.NODE_ENV === 'production') {
-  options.schema = process.env.SCHEMA;  // define your schema in options object
+  options.schema = process.env.SCHEMA;
 }
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    // Add this block to create the schema in production
-    if (process.env.NODE_ENV === 'production') {
-      await queryInterface.createSchema(process.env.SCHEMA);
-    }
-
     await queryInterface.createTable('Spots', {
       id: {
         allowNull: false,
@@ -76,11 +71,35 @@ module.exports = {
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       }
     }, options);
+
+    const tableName = process.env.NODE_ENV === 'production' ? `${process.env.SCHEMA}.Spots` : 'Spots';
+    
+    // Add indexes for better query performance
+    await queryInterface.addIndex(
+      tableName,
+      ['ownerId'],
+      {
+        name: 'spots_owner_id_idx'
+      }
+    );
+    
+    await queryInterface.addIndex(
+      tableName,
+      ['city', 'state'],
+      {
+        name: 'spots_location_idx'
+      }
+    );
   },
 
   async down(queryInterface, Sequelize) {
+    const tableName = process.env.NODE_ENV === 'production' ? `${process.env.SCHEMA}.Spots` : 'Spots';
+    
+    // Remove indexes first
+    await queryInterface.removeIndex(tableName, 'spots_owner_id_idx');
+    await queryInterface.removeIndex(tableName, 'spots_location_idx');
+    
     options.tableName = 'Spots';
     return queryInterface.dropTable('Spots', options);
   }
-
 };
