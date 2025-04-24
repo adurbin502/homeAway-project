@@ -8,12 +8,6 @@ if (process.env.NODE_ENV === 'production') {
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    let options = {};
-    if (process.env.NODE_ENV === 'production') {
-      options.schema = process.env.SCHEMA;  // define your schema in options object
-    }
-
-    await queryInterface.createSchema(options.schema);
     await queryInterface.createTable('ReviewImages', {
       id: {
         allowNull: false,
@@ -31,10 +25,10 @@ module.exports = {
         onDelete: 'CASCADE'
       },
       url: {
-        type: Sequelize.STRING(2000), // Added max length for URLs
+        type: Sequelize.STRING(2000),
         allowNull: false,
         validate: {
-          isUrl: true // Optional: URL format validation
+          isUrl: true
         }
       },
       createdAt: {
@@ -49,12 +43,28 @@ module.exports = {
       }
     }, options);
 
-    // Optional: Add an index on reviewId for faster lookups
-    await queryInterface.addIndex('ReviewImages', ['reviewId']);
+    const tableName = process.env.NODE_ENV === 'production' ? `${process.env.SCHEMA}.ReviewImages` : 'ReviewImages';
+    
+    // Add index with proper schema handling
+    await queryInterface.addIndex(
+        tableName,
+        ['reviewId'],
+        {
+          name: 'review_images_review_id_idx'
+        }
+    );
   },
 
   async down(queryInterface, Sequelize) {
+    const tableName = process.env.NODE_ENV === 'production' ? `${process.env.SCHEMA}.ReviewImages` : 'ReviewImages';
+    
+    // Remove index first
+    await queryInterface.removeIndex(
+        tableName,
+        'review_images_review_id_idx'
+    );
+    
     options.tableName = 'ReviewImages';
-    return queryInterface.dropTable('ReviewImages', options); // Fixed: Pass table name and options separately
+    return queryInterface.dropTable('ReviewImages', options);
   }
 };
