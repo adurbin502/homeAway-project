@@ -14,7 +14,7 @@ module.exports = {
 
       await queryInterface.createSchema(options.schema);
     await queryInterface.createTable(
-      "Users",
+      "User",
       {
         id: {
           allowNull: false,
@@ -64,6 +64,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    return queryInterface.dropTable("Users", options);
+    return queryInterface.dropTable("User", options);
   },
 };

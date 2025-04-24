@@ -13,7 +13,7 @@ module.exports = {
       await queryInterface.createSchema(process.env.SCHEMA);
     }
 
-    await queryInterface.createTable('Spots', {
+    await queryInterface.createTable('Spot', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -24,7 +24,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Users',
+          model: 'User',
           key: 'id'
         },
         onDelete: 'CASCADE'
@@ -79,8 +79,8 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    options.tableName = 'Spots';
-    return queryInterface.dropTable('Spots', options);
+    options.tableName = 'Spot';
+    return queryInterface.dropTable('Spot', options);
   }
 
 };

@@ -14,7 +14,7 @@ module.exports = {
     }
 
     await queryInterface.createSchema(options.schema);
-    await queryInterface.createTable('SpotImages', {
+    await queryInterface.createTable('SpotImage', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -25,7 +25,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Spots',
+          model: 'Spot',
           key: 'id'
         },
         onDelete: 'CASCADE'
@@ -53,7 +53,7 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    options.tableName = 'SpotImages';
-    return queryInterface.dropTable('SpotImages', options); // Fixed: Pass table name and options separately
+    options.tableName = 'SpotImage';
+    return queryInterface.dropTable('SpotImage', options); // Fixed: Pass table name and options separately
   }
 };

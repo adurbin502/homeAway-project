@@ -38,12 +38,12 @@ const spots = [
 
 module.exports = {
   async up(queryInterface) {
-    return queryInterface.bulkInsert('Spots', spots, options);  // Changed from options to 'Spots' and added options as third argument
+    return queryInterface.bulkInsert('Spot', spots, options);  // Changed from options to 'Spots' and added options as third argument
   },
 
   async down(queryInterface, Sequelize) {
     const Op = Sequelize.Op;
-    return queryInterface.bulkDelete('Spots', {  // Changed from options to 'Spots'
+    return queryInterface.bulkDelete('Spot', {  // Changed from options to 'Spots'
       name: { [Op.in]: ['App Academy', 'Magic Mansion'] }
     }, options);  // Added options as third argument
   }
