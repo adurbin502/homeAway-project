@@ -1,4 +1,3 @@
-
 'use strict';
 
 let options = {};
@@ -60,26 +59,25 @@ module.exports = {
       }
     }, options);
 
-    // Add index with schema option for production
+    const tableName = process.env.NODE_ENV === 'production' ? `${process.env.SCHEMA}.Reviews` : 'Reviews';
+
     await queryInterface.addIndex(
-        'Reviews',
+        tableName,
         ['spotId', 'userId'],
         {
           unique: true,
-          name: 'reviews_unique_spot_user',
-          ...(process.env.NODE_ENV === 'production' && { schema: process.env.SCHEMA })
+          name: 'reviews_unique_spot_user'
         }
     );
   },
 
   async down(queryInterface, Sequelize) {
-    // Remove index first
+    const tableName = process.env.NODE_ENV === 'production' ? `${process.env.SCHEMA}.Reviews` : 'Reviews';
+
     await queryInterface.removeIndex(
-        'Reviews',
-        'reviews_unique_spot_user',
-        options
+        tableName,
+        'reviews_unique_spot_user'
     );
-    // Then drop the table
     return queryInterface.dropTable('Reviews', options);
   }
 };
