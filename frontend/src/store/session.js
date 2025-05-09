@@ -49,3 +49,7 @@ const sessionReducer = (state = initialState, action) => {
 };
 
 export default sessionReducer;
+
+if (import.meta.env.MODE !== 'production') {
+  window.sessionActions = { login };
+}
