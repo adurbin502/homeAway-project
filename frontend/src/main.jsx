@@ -5,7 +5,7 @@ import './index.css';
 import { Provider } from 'react-redux';
 import configureStore from './store/store';
 import { restoreCSRF, csrfFetch } from './store/csrf';
-import * as sessionActions from './store/session'; // <-- ADD THIS LINE
+import * as sessionActions from './store/session';
 
 const store = configureStore();
 
@@ -14,7 +14,7 @@ if (import.meta.env.MODE !== "production") {
 
   window.csrfFetch = csrfFetch;
   window.store = store;
-  window.sessionActions = sessionActions; // <-- ADD THIS LINE
+  window.sessionActions = sessionActions;
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(
